@@ -184,14 +184,17 @@ devintr()
     // this is a hardware interrupt, via IOCR.
 
     // irq indicates which device interrupted.
-    uint64 irq = extioi_claim();
-    if(irq & (1UL << UART0_IRQ)){
+    // uint64 irq = extioi_claim();
+    int irq = 0;
+    if(estat & (1UL << 7)){
       uartintr();
 
     // tell the apic the device is
     // now allowed to interrupt again.
 
-      extioi_complete(1UL << UART0_IRQ);
+      *(volatile char *)(UART0 + 2);
+      // read ISO, down interrupt
+      // extioi_complete(1UL << UART0_IRQ);
     } else if(irq){
        printf("unexpected interrupt irq=%d\n", irq);
 
